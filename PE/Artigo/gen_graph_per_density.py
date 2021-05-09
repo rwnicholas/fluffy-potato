@@ -7,16 +7,15 @@ class DenseXGraph:
 
     def __init__(self, p, n, low_interv = 10, high_interv = 1000):
         '''
-            p: Representa a densidade do gráfico em porcentagem
-
             n: É o número de vértices
+
+            seed: É utilizado no numpy para possibilitar a reprodução dos grafos
 
             low_interv: Valor mínimo do intervalo do peso das arestas
 
             high_interv: Valor máximo do intervalo do peso das arestas
         '''
-
-        m = (10*(10-1)*p)/2
+        m = (n*(n-1)*p)/2
         
         self.G = nx.generators.random_graphs.dense_gnm_random_graph(n, np.rint(m))
         while not nx.is_connected(self.G):
