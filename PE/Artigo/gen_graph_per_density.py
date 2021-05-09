@@ -5,7 +5,7 @@ import numpy as np
 class DenseXGraph:
     G = None
 
-    def __init__(self, p, n, low_interv = 10, high_interv = 1000):
+    def __init__(self, p, n, low_interv = 10, high_interv = 10**5):
         '''
             p: Representa a densidade do gráfico em porcentagem
             
