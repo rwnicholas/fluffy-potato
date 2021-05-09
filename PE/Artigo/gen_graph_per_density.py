@@ -36,3 +36,6 @@ class DenseXGraph:
             nx.draw_networkx_edge_labels(self.G,pos,edge_labels=labels)
         
         plt.show()
+
+    def export(self, filename):
+        nx.write_gexf(self.G, filename)
