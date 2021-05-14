@@ -10,4 +10,4 @@ for i in range(1,11):
     for p in probab:
         for n in n_var:
             tmp_graph = gpd.DenseXGraph(p, n)
-            tmp_graph.export("graphs/graph_i_" + str(i) + "_p_" + str(p) + "_n_" + str(n) + ".gexf")
+            tmp_graph.export("graphs/graph_i_" + str(i) + "_p_" + str(p) + "_n_" + str(n) + ".yaml")

@@ -38,4 +38,4 @@ class DenseXGraph:
         plt.show()
 
     def export(self, filename):
-        nx.write_gexf(self.G, filename)
+        nx.write_yaml(self.G, filename)
