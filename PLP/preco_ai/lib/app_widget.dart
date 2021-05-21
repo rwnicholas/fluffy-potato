@@ -5,12 +5,12 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Preço Aí',
+      title: 'Previsão do Tempo',
       theme: ThemeData(
         primarySwatch: Colors.red,
         backgroundColor: Colors.black,
       ),
-      home: HomePage(title: 'Consulta o Preço Aí'),
+      home: HomePage(title: 'Previsão do Tempo'),
     );
   }
 }
