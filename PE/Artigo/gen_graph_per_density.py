@@ -23,7 +23,7 @@ class DenseXGraph:
             self.G = nx.generators.random_graphs.dense_gnm_random_graph(n, np.rint(m))
         
         for (u, v) in self.G.edges():
-            self.G.edges[u,v]['weight'] = np.random.randint(low_interv, high_interv)
+            self.G.edges[u,v]['w'] = np.random.randint(low_interv, high_interv)
 
     def plot(self, figsize=(10, 15), label = True):
         plt.figure(figsize=figsize)
@@ -32,10 +32,10 @@ class DenseXGraph:
         nx.draw_networkx(self.G,pos)
 
         if label == True:
-            labels = nx.get_edge_attributes(self.G,'weight')
+            labels = nx.get_edge_attributes(self.G,'w')
             nx.draw_networkx_edge_labels(self.G,pos,edge_labels=labels)
         
         plt.show()
 
     def export(self, filename):
-        nx.write_yaml(self.G, filename)
+        nx.write_edgelist(self.G, filename)

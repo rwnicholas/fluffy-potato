@@ -3,8 +3,10 @@ import time
 import networkx as nx
 import matplotlib.pyplot as plt
 
-n_var = [250, 500, 1000, 10000]
+n_var = [250, 500, 1000, 5000]
+n_var.sort(reverse=True)
 probab = [0.3, 0.6, 0.9, 1]
+probab.sort(reverse=True)
 
 for i in range(1,11):
     for p in probab:
