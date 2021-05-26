@@ -28,6 +28,7 @@ for groupKruskal, groupPrim in zip(itertools.islice(dataBox.groups, len(dataBox.
     plt.title("Algoritmo: " + str(groupKruskal[0]) + " | Nº Vertices: " + str(groupKruskal[1]) + " | Densidade: " + str(groupKruskal[2]) + "\n"
     "Algoritmo: " + str(groupPrim[0]) + " | Nº Vertices: " + str(groupPrim[1]) + " | Densidade: " + str(groupPrim[2])
     )
+    plt.ylabel("Segundos")
     plt.savefig("boxplot-tempo/" + "tempo"+ "_" + str(groupKruskal[1]) + "_" + str(groupKruskal[2]) + ".png")
     plt.close()
 
@@ -37,5 +38,6 @@ for groupKruskal, groupPrim in zip(itertools.islice(dataBox.groups, len(dataBox.
     plt.title("Algoritmo: " + str(groupKruskal[0]) + " | Nº Vertices: " + str(groupKruskal[1]) + " | Densidade: " + str(groupKruskal[2]) + "\n"
     "Algoritmo: " + str(groupPrim[0]) + " | Nº Vertices: " + str(groupPrim[1]) + " | Densidade: " + str(groupPrim[2])
     )
+    plt.ylabel("Megabytes")
     plt.savefig("boxplot-memoria/" + "memoria"+ "_" + str(groupKruskal[1]) + "_" + str(groupKruskal[2]) + ".png")
     plt.close()
