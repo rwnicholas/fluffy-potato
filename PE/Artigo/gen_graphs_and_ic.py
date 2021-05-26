@@ -25,4 +25,9 @@ print(dataBox)
 for group in dataBox.groups:
     plt.boxplot(dataBox.get_group(group)['tempo'])
     plt.title("Algoritmo: " + str(group[0]) + " | Nº Vertices: " + str(group[1]) + " | Densidade: " + str(group[2]))
-    plt.savefig("boxplot/" + str(group[0]) + "_" + str(group[1]) + "_" + str(group[2]) + "_"+ ".png")
+    plt.savefig("boxplot-tempo/" + str(group[0]) + "_" + str(group[1]) + "_" + str(group[2]) + "_tempo"+ ".png")
+
+for group in dataBox.groups:
+    plt.boxplot(dataBox.get_group(group)['memoria'])
+    plt.title("Algoritmo: " + str(group[0]) + " | Nº Vertices: " + str(group[1]) + " | Densidade: " + str(group[2]))
+    plt.savefig("boxplot-memoria/" + str(group[0]) + "_" + str(group[1]) + "_" + str(group[2]) + "_memoria"+ ".png")
