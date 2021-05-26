@@ -12,7 +12,17 @@ data = pd.read_csv("data/result.csv", dtype={
 })
 
 # print(data.head())
-dataMean = data.groupby(['nvertices', 'densidade', 'algoritmo']).mean().drop(columns="ensaio")
+# dataMean = data.groupby(['algoritmo', 'nvertices', 'densidade']).mean().drop(columns="ensaio")
 
-# dataMean.loc[dataMean['algoritmo'] == "kruskal"].plot.scatter(x='densidade', y='tempo')
-# plt.savefig('teste.png')
+# for y_,head in zip(dataMean['tempo'], dataMean['tempo'].axes[0]):
+#     plt.boxplot([y_])
+#     plt.title("Algoritmo: " + str(head[0]) + " | Nº Vertices: " + str(head[1]) + " | Densidade: " + str(head[2]))
+#     plt.show()
+
+dataBox = data.groupby(['algoritmo', 'nvertices', 'densidade'])
+print(dataBox)
+
+for group in dataBox.groups:
+    plt.boxplot(dataBox.get_group(group)['tempo'])
+    plt.title("Algoritmo: " + str(group[0]) + " | Nº Vertices: " + str(group[1]) + " | Densidade: " + str(group[2]))
+    plt.savefig("boxplot/" + str(group[0]) + "_" + str(group[1]) + "_" + str(group[2]) + "_"+ ".png")
