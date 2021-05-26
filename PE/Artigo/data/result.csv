@@ -1,3 +1,4 @@
+algoritmo,ensaio,densidade,nvertices,tempo,memoria
 kruskal,1,0.3,250,0.06s,83.54MB
 kruskal,2,0.3,250,0.06s,83.02MB
 kruskal,3,0.3,250,0.06s,83.44MB
