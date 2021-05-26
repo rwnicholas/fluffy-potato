@@ -31,8 +31,11 @@ for groupKruskal, groupPrim in zip(itertools.islice(dataBox.groups, len(dataBox.
     plt.savefig("boxplot-tempo/" + "tempo"+ "_" + str(groupKruskal[1]) + "_" + str(groupKruskal[2]) + ".png")
     plt.close()
 
-# for group in dataBox.groups:
-#     plt.boxplot(dataBox.get_group(group)['memoria'])
-#     plt.title("Algoritmo: " + str(group[0]) + " | Nº Vertices: " + str(group[1]) + " | Densidade: " + str(group[2]))
-#     plt.savefig("boxplot-memoria/" + str(group[0]) + "_" + str(group[1]) + "_" + str(group[2]) + "_memoria"+ ".png")
-#     plt.close()
+for groupKruskal, groupPrim in zip(itertools.islice(dataBox.groups, len(dataBox.groups)//2), itertools.islice(dataBox.groups, len(dataBox.groups)//2, len(dataBox.groups))):
+    plt.boxplot([dataBox.get_group(groupKruskal)['memoria'], dataBox.get_group(groupPrim)['memoria']])
+    plt.xticks([1,2], ['Kruskal', 'Prim'])
+    plt.title("Algoritmo: " + str(groupKruskal[0]) + " | Nº Vertices: " + str(groupKruskal[1]) + " | Densidade: " + str(groupKruskal[2]) + "\n"
+    "Algoritmo: " + str(groupPrim[0]) + " | Nº Vertices: " + str(groupPrim[1]) + " | Densidade: " + str(groupPrim[2])
+    )
+    plt.savefig("boxplot-memoria/" + "memoria"+ "_" + str(groupKruskal[1]) + "_" + str(groupKruskal[2]) + ".png")
+    plt.close()
