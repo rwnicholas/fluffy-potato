@@ -4,12 +4,10 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 n_var = [250, 500, 1000, 5000]
-n_var.sort(reverse=True)
 probab = [0.3, 0.6, 0.9, 1]
-probab.sort(reverse=True)
 
 for i in range(1,11):
     for p in probab:
         for n in n_var:
             tmp_graph = gpd.DenseXGraph(p, n)
-            tmp_graph.export("graphs/graph_i_" + str(i) + "_p_" + str(p) + "_n_" + str(n) + ".yaml")
+            tmp_graph.export("graphs/graph_i_" + str(i) + "_p_" + str(p) + "_n_" + str(n) + ".txt")
