@@ -20,8 +20,9 @@ data = pd.read_csv("data/result.csv", dtype={
 #     plt.title("Algoritmo: " + str(head[0]) + " | Nº Vertices: " + str(head[1]) + " | Densidade: " + str(head[2]))
 #     plt.show()
 
-dataBox = data.groupby(['nvertices', 'densidade'])
-print(dataBox.count())
+dataBox = data.groupby(['algoritmo'])
+# print(dataBox.describe()['tempo'])
+print(dataBox.describe()['memoria'])
 
 # for groupKruskal, groupPrim in zip(itertools.islice(dataBox.groups, len(dataBox.groups)//2), itertools.islice(dataBox.groups, len(dataBox.groups)//2, len(dataBox.groups))):
 #     plt.boxplot([dataBox.get_group(groupKruskal)['tempo'], dataBox.get_group(groupPrim)['tempo']])
