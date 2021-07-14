@@ -1,11 +1,20 @@
-#!/usr/bin/python3.8
+#!/usr/bin/python3
 
 import socket
+import _thread
 
 HOST = '127.0.0.1'
-PORT = 3940
+PORT = 39400
 
-teste = '123.049.604-13'
+def new_client(conn, addr):
+    print('Connected by', addr)
+    while True:
+        data = conn.recv(1024)
+        if not data:
+            break
+        mensagem = data.decode() + ": " + valida_cpf(data.decode())
+        conn.sendall(mensagem.encode())
+    conn.close()
 
 def valida_cpf(cpf):
     cpf = str(cpf)
@@ -13,8 +22,7 @@ def valida_cpf(cpf):
     sum_2 = 0
 
     if len(cpf) != 11 and not cpf.isdecimal():
-        print('eita')
-        return "CPF Inválido!"
+        return "CPF Inválido! Apenas números são aceitos!"
     
     i = 0
     for x in range(10,1,-1):
@@ -31,22 +39,16 @@ def valida_cpf(cpf):
     dig_1 = sum_1 % 11
     dig_2 = sum_2 % 11
     
-    if dig_1 == int(cpf[9] and dig_2 == int(cpf[10])):
-        print("ihuuuuu")
+    if dig_1 == int(cpf[9]) and dig_2 == int(cpf[10]):
+        return "CPF Válido!!"
     else:
-        print("viiiiiiiiiish")
+        return "CPF Inválido!"
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
+    soc.bind((HOST, PORT))
+    soc.listen()
+    while True:
+        conn, addr = soc.accept()
+        _thread.start_new_thread(new_client, (conn, addr))
     
-
-valida_cpf('52998224725')
-
-# with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
-#     soc.bind((HOST, PORT))
-#     soc.listen()
-#     conn, addr = soc.accept()
-#     with conn:
-#         print('Connected by', addr)
-#         while True:
-#             data = conn.recv(1024)
-#             if not data:
-#                 break
-#             conn.sendall(data)
+    soc.close()
