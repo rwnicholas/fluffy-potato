@@ -1,64 +1,54 @@
 #!/usr/bin/python3
-from flask import Flask, Response, request, jsonify
-
-sucos = [
-    {
-        "id": 1,
-        "nome": "laranja",
-        "litros": 2.5
-    },
-    {
-        "id": 2,
-        "nome": "maçã",
-        "litros": 3
-    },
-    {
-        "id": 3,
-        "nome": "manga",
-        "litros": 1
-    },
-]
-
-def get_next_id():
-    return max(x['id'] for x in sucos)+1
+from flask import Flask, Response, request
+import sqlite3, json
 
 app = Flask(__name__)
 
 @app.route('/api/', methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH',  'OPTIONS'])
 def main():
+    db = sqlite3.connect("aracity.db", check_same_thread=False)
+    cursor = db.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS situacao_produtos (id INTEGER PRIMARY KEY AUTOINCREMENT, produto TEXT, data_entrega DATE, status TEXT CHECK( status IN ('FALHA','SUCESSO') ))")
+
     if request.method == 'GET':
-        return jsonify(sucos)
+        cursor.execute("SELECT * FROM `situacao_produtos`")
+        data = cursor.fetchall()
+        return json.dumps(data)
 
     elif request.method == 'POST':
-        newSuco = {
-            "id": get_next_id()
-        }
-        newSuco.update(request.json)
-        sucos.append(newSuco)
+        try:
+            cursor.execute("INSERT INTO `situacao_produtos` (`produto`,`data_entrega`,`status`) VALUES (?,?,?) RETURNING id", (request.json['produto'], request.json['data_entrega'], request.json['status']))
+            id = int(cursor.lastrowid)
 
-        return jsonify(newSuco)
+            cursor.execute("SELECT * FROM `situacao_produtos` WHERE id = ?", (id,))
+            data = cursor.fetchone()
+            db.commit()
+
+            return Response(json.dumps(data), status=200)
+        except sqlite3.Error as e:
+            print(e.args)
+            return Response(status=400)
 
     elif request.method == 'PUT':
-        ids = [x['id'] for x in sucos]
-        if not request.json['id'] in ids:
-            return Response(status=404)
-        else:
-            for i in sucos:
-                if request.json['id'] == i['id']:
-                    i.update(request.json)
+        try:
+            cursor.execute("UPDATE `situacao_produtos` SET produto = ?, data_entrega = ?, status = ? WHERE id = ?", (request.json['produto'], request.json['data_entrega'], request.json['status'], request.json['id']))
+            db.commit()
+
             return Response(status=200)
+        except sqlite3.Error as e:
+            print(e.args)
+            return Response(status=404)
 
     elif request.method == 'DELETE':
-        ids = [x['id'] for x in sucos]
-        returnedI = None
-        if not int(request.args.get('id')) in ids:
+        try:
+            cursor.execute("DELETE FROM `situacao_produtos` WHERE id = ?", (request.args.get('id')))
+            db.commit()
+
+            return Response(status=200)
+        except sqlite3.Error as e:
+            print(e.args)
             return Response(status=404)
-        else:
-            for i in sucos:
-                if int(request.args.get('id')) == i['id']:
-                    returnedI = i
-                    sucos.remove(i)
-            return jsonify(returnedI)
+
     elif request.method == 'OPTIONS':
         return Response(headers={'Allow':"GET, POST, PUT, DELETE, OPTIONS", 'Content-Type': 'application/json'})
 
