@@ -5,6 +5,13 @@ import socket, json
 HOST = '127.0.0.1'
 PORT = 39400
 
+'''
+    1- Ler mensagens
+    2- Enviar mensagem
+    3- Ler e enviar
+    0- Sair
+'''
+
 usuario = input("Login: ")
 
 def send_to(send, read, content):
@@ -18,7 +25,7 @@ def send_to(send, read, content):
         soc.connect((HOST, PORT))
         soc.sendall(json.dumps(data).encode('utf-8'))
 
-        response = soc.recv(1024)
+        response = soc.recv(4096)
         
         return json.loads(response.decode('utf-8'))
 

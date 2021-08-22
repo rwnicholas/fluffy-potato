@@ -13,6 +13,7 @@ import json
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE', 'PATCH',  'OPTIONS', 'HEAD'])
 def main(request):
+    print(request.data)
     if request.method == 'GET':
         if request.GET.get('nome', '') == '':
             return Response(status=status.HTTP_400_BAD_REQUEST)

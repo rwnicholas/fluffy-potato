@@ -27,33 +27,27 @@ database = [
 
 
 '''
-    Protocolo de mensagens entre usuários:
-        1- Enviar mensagem para usuário (send_message)
-        2- Ler mensagens (read_message)
-    Formato: 
-        content_format {
-            "from": sender
-            "to": reciever
-            "message": message
-        }
-
-        protocol {
-            send: True | False
-            read: True | False
-            content: content_format
-        }
+{
+    "send": True | False,
+    "read": True | False,
+    "content": {
+        "from": "sender",
+        "to": "receiver",
+        "message": "message"
+    }
+}
 '''
 
-def read(to_):
+def read(from_):
     users = [x['to'] for x in database]
-    if to_ in users:
+    if from_ in users:
         mensagens = []
         for m in database:
-            if to_ == m['to']:
+            if from_ == m['to']:
                 mensagens.append(m)
         return {"mensagens": mensagens}
     else:
-        return {"error": 404, "reason": "Nenhuma mensagem para " + to_}
+        return {"error": 404, "reason": "Nenhuma mensagem para " + from_}
 
 def send(from_, to_, message_):
     if (from_ != None and to_ != None and message_ != None) and (from_ != "" and to_ != "" and message_ != ""):
@@ -75,15 +69,16 @@ def process_request(data):
                 output.update(send(content['from'], content['to'], content['message']))
             if data['read'] == True:
                 output.update(read(data['content']['from']))
-
-        return json.dumps(output).encode('utf-8')
+            return json.dumps(output).encode('utf-8')
+        else:
+            raise ValueError
     except:
         return b'{"error": 400, "reason": "Body incomplete!"}'
 
 def new_client(conn, addr):
     print('Connected by', addr)
     while True:
-        data = conn.recv(1024)
+        data = conn.recv(4096)
         if not data:
             break
         conn.sendall(process_request(json.loads(data.decode('utf-8'))))
