@@ -26,10 +26,10 @@ def bind():
         print(response)
 
         if response['status'] == "ok":
-            print("Endereço registrado no servidor de nomes")
+            print(f"Endereço de {data['nome']} registrado no servidor de nomes")
             return True
         else:
-            print("Não foi possível registrar no servidor de nomes")
+            print(f"Não foi possível registrar {data['nome']} no servidor de nomes")
             return False
 
 
