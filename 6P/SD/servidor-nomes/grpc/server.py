@@ -12,9 +12,9 @@ def bind():
         "type": "bind",
         "nome": "entregar_produto",
         "addr": "(localhost, 8001)",
-        "atr_operacao": "validação",
-        "atr_entrada": "cpf",
-        "atr_entrada_type": "text"
+        "atr_operacao": "sinalizar entrega",
+        "atr_entrada": "produto/data_entrega/status",
+        "atr_entrada_type": "protocolbuffer"
     }
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
         soc.connect(('127.0.0.1', 39400))
@@ -39,18 +39,18 @@ class AracityServicer(produto_pb2_grpc.Produto_EntregueServicer):
         response.resposta = aracity.entrega_produto(request.produto, request.data_entrega, request.status)
 
         return response
+if bind():
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=15))
 
-server = grpc.server(futures.ThreadPoolExecutor(max_workers=15))
+    produto_pb2_grpc.add_Produto_EntregueServicer_to_server(
+        AracityServicer(), server
+    )
+    print('Ouvindo a porta 8001.')
+    server.add_insecure_port('[::]:8001')
+    server.start()
 
-produto_pb2_grpc.add_Produto_EntregueServicer_to_server(
-    AracityServicer(), server
-)
-print('Ouvindo a porta 8001.')
-server.add_insecure_port('[::]:8001')
-server.start()
-
-try:
-    while True:
-        time.sleep(39400)
-except KeyboardInterrupt:
-    server.stop(0)
+    try:
+        while True:
+            time.sleep(39400)
+    except KeyboardInterrupt:
+        server.stop(0)

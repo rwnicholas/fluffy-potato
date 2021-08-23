@@ -3,7 +3,8 @@
 import pickle
 import socket
 
-cpf = '52998224725'
+# cpf = '52998224725'
+cpf = input("Digite o CPF a validar: ")
 
 def lookup():
     HOST = '127.0.0.1'
