@@ -1,7 +1,28 @@
 #!/usr/bin/python3
-import grpc
+import grpc, socket, pickle
 
 import produto_pb2_grpc, produto_pb2
+
+def lookup():
+    HOST = '127.0.0.1'
+    PORT = 39400
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
+        data = {
+            "type": "lookup",
+            "nome": "entregar_produto",
+            "atr_operacao": None,
+            "atr_entrada": None,
+            "atr_entrada_type": None
+        }
+        soc.connect((HOST, PORT))
+        soc.sendall(pickle.dumps(data))
+
+        response = soc.recv(1024)
+        msg = pickle.loads(response)
+        print(msg)
+        
+        return msg
 
 channel = grpc.insecure_channel('localhost:3940')
 stub = produto_pb2_grpc.Produto_EntregueStub(channel)

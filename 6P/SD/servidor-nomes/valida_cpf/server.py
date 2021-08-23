@@ -1,10 +1,35 @@
 #!/usr/bin/python3
 
-import socket
+import socket, pickle
 import _thread
 
 HOST = '127.0.0.1'
 PORT = 8002
+
+def bind():
+    data = {
+        "type": "bind",
+        "nome": "valida_cpf",
+        "addr": f"({HOST}, {PORT})",
+        "atr_operacao": "validação",
+        "atr_entrada": "cpf",
+        "atr_entrada_type": "text"
+    }
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
+        soc.connect(('127.0.0.1', 39400))
+        soc.sendall(pickle.dumps(data))
+
+        response = soc.recv(1024)
+        
+        response = pickle.loads(response)
+        print(response)
+
+        if response['status'] == "ok":
+            print("Endereço registrado no servidor de nomes")
+            return True
+        else:
+            print("Não foi possível registrar no servidor de nomes")
+            return False
 
 def new_client(conn, addr):
     print('Connected by', addr)
@@ -43,12 +68,10 @@ def valida_cpf(cpf):
         return "CPF Válido!!"
     else:
         return "CPF Inválido!"
-
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
-    soc.bind((HOST, PORT))
-    soc.listen()
-    while True:
-        conn, addr = soc.accept()
-        _thread.start_new_thread(new_client, (conn, addr))
-    
-    soc.close()
+if bind():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        while True:
+            conn, addr = s.accept()
+            _thread.start_new_thread(new_client, (conn, addr))

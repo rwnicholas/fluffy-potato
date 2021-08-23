@@ -15,7 +15,7 @@ cursor.execute("CREATE TABLE IF NOT EXISTS nomes_atributos ("
     +"addr TEXT NOT NULL,"
     +"atr_operacao TEXT NOT NULL,"
     +"atr_entrada TEXT NOT NULL,"
-    +"atr_entrada_type TEXT CHECK( status IN ('json','text', 'protocolbuffer') ) NOT NULL,"
+    +"atr_entrada_type TEXT CHECK( atr_entrada_type IN ('json','text', 'protocolbuffer') ) NOT NULL,"
     +"UNIQUE ( nome, atr_operacao, atr_entrada, atr_entrada_type )"
     +")")
 
@@ -63,10 +63,18 @@ def lookup(nome = None, atr_operacao = None, atr_entrada = None, atr_entrada_typ
         cursor.execute(sql_select_query, parameters)
         r = [dict((cursor.description[i][0], value) \
                 for i, value in enumerate(row)) for row in cursor.fetchall()]
+        
+        ## Mudando o formato de addr de texto para tupla HOST,PORT
+        for x in r:
+            addr = x['addr']
+            tmp = addr[1:-1]
+            tmp = tuple(tmp.split(', '))
+            x['addr'] = (tmp[0], int(tmp[1]))
+        
         return pickle.dumps(r)
     except sqlite3.Error as e:
         print(e.args)
-        return pickle.dumps("{'status': 'error'}")
+        return pickle.dumps({'status': 'error'})
 
 def bind(nome, addr, atr_operacao, atr_entrada, atr_entrada_type):
     try:
@@ -75,10 +83,10 @@ def bind(nome, addr, atr_operacao, atr_entrada, atr_entrada_type):
             (nome,addr,atr_operacao,atr_entrada,atr_entrada_type))
         database.commit()
 
-        return pickle.dumps("{'status': 'ok'}")
+        return pickle.dumps({'status': 'ok'})
     except sqlite3.Error as e:
         print(e.args)
-        return pickle.dumps("{'status': 'error'}")
+        return pickle.dumps({'status': 'error'})
     
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     soc.bind((HOST, PORT))
@@ -90,5 +98,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
             data = conn.recv(1024)
             if not data:
                 break
-            mensagem = "simbora negada!"
-            conn.sendall(mensagem.encode())
+            conteudo = pickle.loads(data)
+            try:
+                if conteudo['type'] == 'bind':
+                    conn.sendall(bind(conteudo['nome'],conteudo['addr'],conteudo['atr_operacao'],conteudo['atr_entrada'],conteudo['atr_entrada_type']))
+                elif conteudo['type'] == 'lookup':
+                    ctd = dict(conteudo).copy()
+                    del ctd['type']
+                    conn.sendall(lookup(**ctd))
+                else:
+                    raise TypeError
+            except:
+                conn.sendall(pickle.dumps({'status': 'error'}))
