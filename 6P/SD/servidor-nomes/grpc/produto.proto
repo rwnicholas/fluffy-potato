@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message Produto {
+    string produto = 1;
+    string data_entrega = 2;
+    string status = 3;
+}
+
+message Resposta {
+    string resposta = 1;
+}
+
+service Produto_Entregue {
+    rpc EntregaProduto(Produto) returns (Resposta) {}
+}
