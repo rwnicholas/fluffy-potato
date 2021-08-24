@@ -10,10 +10,15 @@ def hasVoid(B, first):
     return False
 
 def concatDicts(test_dict1, test_dict2):
-    res = {key : list(set(test_dict1.get(key, []) + test_dict2.get(key, []))) 
-        for key in set(test_dict2) | set(test_dict1)}
+    for key in test_dict1: 
+        if key in test_dict2: 
+            for val in test_dict1[key]:
+                if val not in test_dict2[key]:  
+                    test_dict2[key].append(val)
+        else: 
+            test_dict2[key] = test_dict1[key][:]
     
-    return res
+    return test_dict2
 
 def flattenArray(array):
     tmp = np.hstack(array).squeeze()
