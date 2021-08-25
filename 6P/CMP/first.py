@@ -3,9 +3,9 @@ import numpy as np
 
 first = {}
 
-def hasVoid(B, first):
-    if B in first.keys():
-        if 'ε' in first[B]:
+def hasVoid(B, gramatica):
+    if B in gramatica.keys():
+        if 'ε' in gramatica[B]:
             return True
     return False
 
@@ -21,14 +21,18 @@ def concatDicts(test_dict1, test_dict2):
     return test_dict2
 
 def flattenArray(array):
-    tmp = np.hstack(array).squeeze()
+    if len(array) == 1 and type(array[0]) == str:
+        return array
+    elif len(array) == 0:
+        return array
+    tmp = np.concatenate(array, axis=None)
     return list(set(tmp)).copy()
 
-def firstSet(linha):
+def firstSet(gramatica):
     global first
 
     # Regra 0, 1 e 2 do First
-    for a,b in reversed(linha.items()):
+    for a,b in reversed(gramatica.items()):
         if not a in first.keys():
             first[a] = []
 
@@ -39,11 +43,11 @@ def firstSet(linha):
                     first[a].append(i[0])
 
     # Regra 3 do First
-    for a,b in reversed(linha.items()):
+    for a,b in reversed(gramatica.items()):
         for i in b:
             if i[0].isupper():
                 if len(i) > 1:
-                    if not hasVoid(i[0], first):
+                    if not hasVoid(i[0], gramatica):
                         first[a].append(first[i[0]])
                         first[a] = flattenArray(first[a])
                     else:
@@ -62,13 +66,13 @@ def firstSet(linha):
     return first
 
 def run(arg):
-    linhas = arg
+    gramatica = arg
     # For duas vezes para garantir que os campos foram preenchidos corretamente,
     # mesmo que um não-terminal tenha mudado 
     for i in range(2):
-        firstSet(linhas)
+        firstSet(gramatica)
     
     for a,b in first.items():
         first[a] = flattenArray(b)
 
-    return first
+    return dict(reversed(list(first.items())))
