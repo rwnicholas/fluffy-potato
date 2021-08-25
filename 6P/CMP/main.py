@@ -3,7 +3,7 @@ import first
 import follow
 
 gramatica = {}
-f = open("input2.txt", "r")
+f = open("input3.txt", "r")
 
 for x in f:
     a,b = x.split('->')

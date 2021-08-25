@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import numpy as np
+import itertools
 
 first = {}
 
@@ -20,13 +21,13 @@ def concatDicts(test_dict1, test_dict2):
     
     return test_dict2
 
-def flattenArray(array):
-    if len(array) == 1 and type(array[0]) == str:
-        return array
-    elif len(array) == 0:
-        return array
-    tmp = np.concatenate(array, axis=None)
-    return list(set(tmp)).copy()
+def flattenArray(arrayL):
+    flatten = itertools.chain.from_iterable
+    tmp = list(flatten(arrayL))
+    for rm in tmp: # Para evitar listas dentro de listas geradas com a recursão
+        if type(rm) == list:
+            tmp.remove(rm)
+    return list(set(tmp))
 
 def firstSet(gramatica):
     global first

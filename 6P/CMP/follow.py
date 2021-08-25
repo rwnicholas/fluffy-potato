@@ -15,7 +15,8 @@ def getFirst(gramatica, firstSet, beta):
             return firstSet[beta[0]]
         
         if hasVoidInBeta(beta, gramatica):
-            return flattenArray(firstSet[beta[0]] + list(getFirst(firstSet, beta[1:])))
+            tmp = flattenArray(firstSet[beta[0]] + list(getFirst(gramatica, firstSet, beta[1:])))
+            return tmp
         return firstSet[beta[0]]
 
 def getIndex(elemento, lista):
@@ -52,16 +53,15 @@ def followSet(firstSet, gramatica):
                     beta = b[x][(y+1):]
                     if len(b[x]) > y+1:
                         if len(beta) >= 1:
-                            firstFromBeta = getFirst(gramatica, firstSet, beta)
-                            firstFromBeta = flattenArray(firstFromBeta)
-                            follow[a].append(firstFromBeta)
+                            follow[a].append(getFirst(gramatica, firstSet, beta))
                             follow[a] = flattenArray(follow[a])
                             if 'ε' in follow[a]:
                                 follow[a].remove('ε')
                     if hasVoidInBeta(beta, gramatica) or not beta:
                         follow[s] = flattenArray(follow[s])
-                        follow[a].append(follow[s])
-                        follow[a] = flattenArray(follow[a])
+                        if follow[s]:
+                            follow[a].append(follow[s])
+                            follow[a] = flattenArray(follow[a])
     
     return follow
 
