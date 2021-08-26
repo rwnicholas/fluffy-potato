@@ -1,9 +1,18 @@
 #!/usr/bin/python3
 import first
 import follow
+import csv
+
+def exportDictToCSV(dict1, filename):
+    a_file = open(filename+".csv", "w")
+    writer = csv.writer(a_file)
+    for key, value in dict1.items():
+        writer.writerow([key, value])
+
+    a_file.close()
 
 gramatica = {}
-f = open("input3.txt", "r")
+f = open("input2.txt", "r")
 
 for x in f:
     a,b = x.split('->')
@@ -11,7 +20,9 @@ for x in f:
     gramatica[a] = b.split('|')
 
 
-print(gramatica)
 firstSet = first.run(gramatica.copy())
+followSet = follow.run(firstSet, gramatica.copy())
 print("Conjunto First:", firstSet)
-print("Conjunto Follow:", follow.run(firstSet, gramatica.copy()))
+print("Conjunto Follow:", followSet)
+# exportDictToCSV(firstSet, "item2_conjunto_first")
+# exportDictToCSV(followSet, "item2_conjunto_follow")
