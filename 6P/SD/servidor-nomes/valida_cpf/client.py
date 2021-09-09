@@ -13,10 +13,8 @@ def lookup():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
         data = {
             "type": "lookup",
-            "nome": "valida_cpf",
-            "atr_operacao": None,
-            "atr_entrada": None,
-            "atr_entrada_type": None
+            "nome": None,
+            "atributos": ['11 digitos', 'cpf', 'validação']
         }
         soc.connect((HOST, PORT))
         soc.sendall(pickle.dumps(data))

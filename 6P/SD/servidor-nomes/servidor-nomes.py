@@ -13,18 +13,17 @@ cursor.execute("CREATE TABLE IF NOT EXISTS nomes_atributos ("
     +"id INTEGER PRIMARY KEY AUTOINCREMENT,"
     +"nome TEXT NOT NULL,"
     +"addr TEXT NOT NULL,"
-    +"atr_operacao TEXT NOT NULL,"
-    +"atr_entrada TEXT NOT NULL,"
-    +"atr_entrada_type TEXT CHECK( atr_entrada_type IN ('json','text', 'protocolbuffer') ) NOT NULL,"
-    +"UNIQUE ( nome, atr_operacao, atr_entrada, atr_entrada_type )"
+    +"atr_1 TEXT NOT NULL,"
+    +"atr_2 TEXT NOT NULL,"
+    +"atr_3 TEXT NOT NULL,"
+    +"UNIQUE ( nome, atr_1, atr_2, atr_3 )"
     +")")
 
-def lookup(nome = None, atr_operacao = None, atr_entrada = None, atr_entrada_type = None):
-    sql_select_query = "SELECT nome,addr FROM nomes_atributos WHERE"
-    need_and = False
+def lookup(atributos, nome = None):
+    sql_select_query = "SELECT * FROM nomes_atributos WHERE"
     parameters = []
     try:
-        if (nome == atr_operacao == atr_entrada == atr_entrada_type == None):
+        if (nome == atributos == None):
             raise sqlite3.Error
         
         if nome != None:
@@ -32,34 +31,26 @@ def lookup(nome = None, atr_operacao = None, atr_entrada = None, atr_entrada_typ
             parameters.append(nome)
             need_and = True
         
-        if atr_operacao != None:
-            if need_and:
-                sql_select_query+= " AND atr_operacao = ?"
-                parameters.append(atr_operacao)
-            else:
-                sql_select_query+= " atr_operacao = ?"
-                parameters.append(atr_operacao)
-                need_and = True
+        elif atributos != None:
+            sql_select_query+= " atr_1 = ?"
+            parameters.append(atributos[0])
 
-        if atr_entrada != None:
-            if need_and:
-                sql_select_query+= " AND atr_entrada = ?"
-                parameters.append(atr_entrada)
-            else:
-                sql_select_query+= " atr_entrada = ?"
-                parameters.append(atr_entrada)
-                need_and = True
+            sql_select_query+= " OR atr_2 = ?"
+            parameters.append(atributos[0])
 
-        if atr_entrada_type != None:
-            if need_and:
-                sql_select_query+= " AND atr_entrada_type = ?"
-                parameters.append(atr_entrada_type)
-            else:
-                sql_select_query+= " atr_entrada_type = ?"
-                parameters.append(atr_entrada_type)
-                need_and = True
+            sql_select_query+= " OR atr_3 = ?"
+            parameters.append(atributos[0])
+
+            for atrI in range(1, len(atributos)):
+                sql_select_query+= " OR atr_1 = ?"
+                parameters.append(atributos[atrI])
+
+                sql_select_query+= " OR atr_2 = ?"
+                parameters.append(atributos[atrI])
+
+                sql_select_query+= " OR atr_3 = ?"
+                parameters.append(atributos[atrI])
         
-        print(sql_select_query)
         cursor.execute(sql_select_query, parameters)
         r = [dict((cursor.description[i][0], value) \
                 for i, value in enumerate(row)) for row in cursor.fetchall()]
@@ -76,11 +67,11 @@ def lookup(nome = None, atr_operacao = None, atr_entrada = None, atr_entrada_typ
         print(e.args)
         return pickle.dumps({'status': 'error'})
 
-def bind(nome, addr, atr_operacao, atr_entrada, atr_entrada_type):
+def bind(nome, addr, atr_1, atr_2, atr_3):
     try:
-        cursor.execute("INSERT OR REPLACE INTO nomes_atributos (nome, addr, atr_operacao, atr_entrada, atr_entrada_type)"
+        cursor.execute("INSERT OR REPLACE INTO nomes_atributos (nome, addr, atr_1, atr_2, atr_3)"
             +" VALUES (?,?,?,?,?)",
-            (nome,addr,atr_operacao,atr_entrada,atr_entrada_type))
+            (nome,addr,atr_1,atr_2,atr_3))
         database.commit()
 
         return pickle.dumps({'status': 'ok'})
@@ -93,7 +84,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
     soc.listen()
     while True:
         conn, addr = soc.accept()
-        print('Conecatado por', addr)
+        print('Conectado por', addr)
         while True:
             data = conn.recv(1024)
             if not data:
@@ -101,7 +92,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
             conteudo = pickle.loads(data)
             try:
                 if conteudo['type'] == 'bind':
-                    conn.sendall(bind(conteudo['nome'],conteudo['addr'],conteudo['atr_operacao'],conteudo['atr_entrada'],conteudo['atr_entrada_type']))
+                    conn.sendall(bind(conteudo['nome'],conteudo['addr'],conteudo['atr_1'],conteudo['atr_2'],conteudo['atr_3']))
                 elif conteudo['type'] == 'lookup':
                     ctd = dict(conteudo).copy()
                     del ctd['type']

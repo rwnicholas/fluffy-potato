@@ -11,9 +11,7 @@ def lookup():
         data = {
             "type": "lookup",
             "nome": "entregar_produto",
-            "atr_operacao": None,
-            "atr_entrada": None,
-            "atr_entrada_type": None
+            "atributos": ['carga', 'sinalizar entrega', 'transporte']
         }
         soc.connect((HOST, PORT))
         soc.sendall(pickle.dumps(data))

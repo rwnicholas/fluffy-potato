@@ -12,9 +12,9 @@ def bind():
         "type": "bind",
         "nome": "entregar_produto",
         "addr": "(localhost, 8001)",
-        "atr_operacao": "sinalizar entrega",
-        "atr_entrada": "produto/data_entrega/status",
-        "atr_entrada_type": "protocolbuffer"
+        "atr_1": "sinalizar entrega",
+        "atr_2": "transporte",
+        "atr_3": "carga"
     }
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
         soc.connect(('127.0.0.1', 39400))

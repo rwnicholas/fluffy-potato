@@ -11,9 +11,9 @@ def bind():
         "type": "bind",
         "nome": "valida_cpf",
         "addr": f"({HOST}, {PORT})",
-        "atr_operacao": "validação",
-        "atr_entrada": "cpf",
-        "atr_entrada_type": "text"
+        "atr_1": "validação",
+        "atr_2": "cpf",
+        "atr_3": "11 digitos"
     }
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
         soc.connect(('127.0.0.1', 39400))
