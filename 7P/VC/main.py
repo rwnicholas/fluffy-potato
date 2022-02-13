@@ -1,6 +1,4 @@
 import geopandas as gpd
-import geoplot as gplt
-import geoplot.crs as gcrs
 import plotly as plt
 import plotly.express as px
 import numpy as np
